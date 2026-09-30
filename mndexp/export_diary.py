@@ -6,6 +6,7 @@ import shutil
 from base64 import b64encode
 
 import datetime
+import io
 
 import yaml
 
@@ -65,17 +66,17 @@ def export_diary():
 
 def get_favorite_food(download):
 
-    xls = pd.ExcelFile(download)
+    xls = pd.ExcelFile(io.BytesIO(download))
 
     df = pd.read_excel(xls, sheet_name=[0, 2], index_col=None)
 
-    df[0]['Date & Time'] =pd.to_datetime(df[0]['Date & Time'])
+    df[0] = df[0].assign(**{'Date & Time': pd.to_datetime(df[0]['Date & Time'])})
     df[0] = df[0].sort_values(by=['Date & Time'])
     df[0].reset_index(drop=True, inplace=True)
     print(df[0][['Name', 'Meal', 'Date & Time']])
     d = df[0].to_dict(orient='index')
 
-    df[2]['Date'] =pd.to_datetime(df[2]['Date'])
+    df[2] = df[2].assign(**{'Date': pd.to_datetime(df[2]['Date'])})
     df[2] = df[2].sort_values(by=['Date'])
     df[2] = df[2][df[2]['Measurement'] == 'Daily Steps Count']
     df[2].reset_index(drop=True, inplace=True)
