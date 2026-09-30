@@ -83,8 +83,15 @@ def get_favorite_food(download):
     print(df[2][['Date', 'Measurement', 'Value']])
     e = df[2].to_dict(orient='index')
 
-    with open('steps.yml', 'w') as file:
-        yaml.dump(e, file)
+    if e:
+        with open('steps.yml', 'w') as file:
+            yaml.dump(e, file)
+    else:
+        print('no steps data in export; keeping existing steps.yml')
+
+    if not d:
+        print('no diary entries in export; keeping existing recent_food.yml')
+        return
 
     meal = d[len(d)-1]['Meal']
     if meal == "Breakfast":
